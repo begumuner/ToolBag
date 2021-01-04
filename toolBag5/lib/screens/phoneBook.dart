@@ -4,8 +4,6 @@ import 'package:phonebook/screens/kisiekle.dart';
 
 import '../databasehelper.dart';
 
-
-
 class KisiListesi extends StatefulWidget {
   @override
   _KisiListesiState createState() => _KisiListesiState();
@@ -24,15 +22,12 @@ class _KisiListesiState extends State<KisiListesi> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.red[400],
         title: Text('Phone Book'),
-        
       ),
       floatingActionButton: FloatingActionButton(
-        
           backgroundColor: Colors.red[400],
           tooltip: 'New Contact',
           onPressed: () {
@@ -40,9 +35,10 @@ class _KisiListesiState extends State<KisiListesi> {
                 context, MaterialPageRoute(builder: (context) => KisiEkle()));
           },
           child: Icon(
-            Icons.add,color: Colors.white,
+            Icons.add,
+            color: Colors.white,
           )),
-          body: FutureBuilder(
+      body: FutureBuilder(
         future: databaseHelper.kisiListesiniGetir(),
         builder: (context, AsyncSnapshot<List<Kisi>> snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
@@ -53,11 +49,23 @@ class _KisiListesiState extends State<KisiListesi> {
                   )
                 : ListView.builder(
                     itemBuilder: (context, index) {
+                      //siralama
+                      tumKisiler.sort(
+                        (Kisi a, Kisi b) => a.kisiAd[0]
+                            .toLowerCase()
+                            .compareTo(b.kisiAd[0].toLowerCase()),
+                      );
                       return ExpansionTile(
                         //isim ilk harfini basa ekleme
                         leading: CircleAvatar(
                           backgroundColor: Colors.red[200],
-                          child: Text(tumKisiler[index].kisiAd[0], style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),),
+                          child: Text(
+                            tumKisiler[index].kisiAd[0].toUpperCase(),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
                         //baslik
                         title: Text(tumKisiler[index].kisiAd),
@@ -108,8 +116,10 @@ class _KisiListesiState extends State<KisiListesi> {
                                     Padding(
                                       padding: EdgeInsets.only(left: 50),
                                       child: InkWell(
-                                        
-                                          child: Icon(Icons.delete_forever, color: Colors.red[400],),
+                                          child: Icon(
+                                            Icons.delete_forever,
+                                            color: Colors.red[400],
+                                          ),
                                           onTap: () {
                                             kisiSil(tumKisiler[index].kisiID);
                                           }),
@@ -162,8 +172,7 @@ class _KisiListesiState extends State<KisiListesi> {
                       child: Text('Cancel'),
                       color: Colors.grey,
                       onPressed: () {
-                         Navigator.pop(context);
-                       
+                        Navigator.pop(context);
                       },
                     ),
                     RaisedButton(

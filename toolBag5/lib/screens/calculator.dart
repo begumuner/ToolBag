@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:phonebook/screens/anasayfa.dart';
 import 'package:math_expressions/math_expressions.dart';
 
-
 class HesapMakinesi extends StatefulWidget {
   @override
   _HesapMakinesiState createState() => _HesapMakinesiState();
@@ -11,17 +10,16 @@ class HesapMakinesi extends StatefulWidget {
 class _HesapMakinesiState extends State<HesapMakinesi> {
   String denklem = "0";
   String sonuc = "0";
-  String expression = "";
+  String denklemIfadesi = "";
   double denklemFontSize = 35.0;
   double sonucFontSize = 45.0;
 
   buttonPressed(String buttonText) {
     setState(() {
       //C'ye basarsan hepsini 0 la sil e basarsan sondan eksilt
-      if (buttonText == "C") {
+      if (buttonText == "AC") {
         denklem = "0";
         sonuc = "0";
-        
       } else if (buttonText == "⌫") {
         denklem = denklem.substring(0, denklem.length - 1);
         //hicbir sey kalmadiysa 0 yazdir denklem yerine
@@ -32,23 +30,24 @@ class _HesapMakinesiState extends State<HesapMakinesi> {
         denklemFontSize = 35.0;
         sonucFontSize = 45.0;
 
-        //butonlari kodun anlamasini sagladik
-        expression = denklem;
-        expression = expression.replaceAll('×', '*');
-        expression = expression.replaceAll('÷', '/');
-
+        denklemIfadesi = denklem;
         //kutuphanemiz
         try {
+          //math expression kullanimi
+          //Parser p = Parser();
+          // Expression exp = p.parse('(x^2 + cos(y)) / 3');
+          //  ContextModel cm = ContextModel()
+          // double eval = exp.evaluate(EvaluationType.REAL, cm)
           Parser p = Parser();
-          Expression exp = p.parse(expression);
+          Expression exp = p.parse(denklemIfadesi);
           ContextModel cm = ContextModel();
           sonuc = '${exp.evaluate(EvaluationType.REAL, cm)}';
         } catch (e) {
           sonuc = "Error";
         }
       } else {
-        denklemFontSize = 45.0;
-        sonucFontSize = 3.0;
+        //denklem yazilir
+        
         if (denklem == "0") {
           denklem = buttonText;
         } else {
@@ -56,29 +55,6 @@ class _HesapMakinesiState extends State<HesapMakinesi> {
         }
       }
     });
-  }
-
-      //tasarim
-      //kendi widgetimi yazdim butun butonlarda esit bir sekilde olmasi icin
-  Widget benimButonum( String buttonText, double buttonHeight, Color buttonColor) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.1 * buttonHeight,
-      color: buttonColor,
-      child: FlatButton(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(0.0),
-              side: BorderSide(
-                  color: Colors.white, width: 1, style: BorderStyle.solid)),
-          padding: EdgeInsets.all(16.0),
-          onPressed: () => buttonPressed(buttonText),
-          child: Text(
-            buttonText,
-            style: TextStyle(
-                fontSize: 30.0,
-                fontWeight: FontWeight.normal,
-                color: Colors.white),
-          )),
-    );
   }
 
   @override
@@ -100,7 +76,6 @@ class _HesapMakinesiState extends State<HesapMakinesi> {
           },
         ),
       ),
-
       body: Column(
         children: <Widget>[
           Container(
@@ -112,7 +87,7 @@ class _HesapMakinesiState extends State<HesapMakinesi> {
               style: TextStyle(fontSize: denklemFontSize),
             ),
           ),
-           //2. satiri
+          //2. satiri
           Container(
             alignment: Alignment.centerRight,
             padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
@@ -135,9 +110,9 @@ class _HesapMakinesiState extends State<HesapMakinesi> {
                   child: Table(
                     children: [
                       TableRow(children: [
-                        benimButonum("C", 1.1, Colors.red[400]),
+                        benimButonum("AC", 1.1, Colors.red[400]),
                         benimButonum("⌫", 1.1, Colors.red[200]),
-                        benimButonum("÷", 1.1, Colors.red[200]),
+                        benimButonum("/", 1.1, Colors.red[200]),
                       ]),
                       TableRow(children: [
                         benimButonum("7", 1.1, Colors.black54),
@@ -169,7 +144,7 @@ class _HesapMakinesiState extends State<HesapMakinesi> {
                   child: Table(
                     children: [
                       TableRow(children: [
-                        benimButonum("×", 1.1, Colors.red[200]),
+                        benimButonum("*", 1.1, Colors.red[200]),
                       ]),
                       TableRow(children: [
                         benimButonum("-", 1.1, Colors.red[200]),
@@ -188,11 +163,31 @@ class _HesapMakinesiState extends State<HesapMakinesi> {
           ),
         ],
       ),
-
-      
     );
+  }
 
-    
-    
+  //tasarim
+  //kendi widgetimi yazdim butun butonlarda esit bir sekilde olmasi icin
+  Widget benimButonum(
+      String buttonText, double buttonHeight, Color buttonColor) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.1 * buttonHeight,
+      color: buttonColor,
+      child: FlatButton(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(0.0),
+            side: BorderSide(
+                color: Colors.white, width: 1, style: BorderStyle.solid)),
+        padding: EdgeInsets.all(16.0),
+        onPressed: () => buttonPressed(buttonText),
+        child: Text(
+          buttonText,
+          style: TextStyle(
+              fontSize: 30.0,
+              fontWeight: FontWeight.normal,
+              color: Colors.white),
+        ),
+      ),
+    );
   }
 }
